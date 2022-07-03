@@ -17,6 +17,8 @@ from ast import Break
 import csv
 from multiprocessing.reduction import duplicate
 from os import dup
+from sqlite3 import Timestamp
+from datetime import date, datetime
 
 #Constantes y variables
 filecsvdni2 = []
@@ -172,7 +174,16 @@ def mostrarpantalla(solicitardni):
 
 #Mostrar resultados por csv
 def mostrarcsv(solicitardni):
-    tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
+    dt = datetime.now()
+    tiempo = datetime.timestamp(dt)
+    f = open(str(solicitardni) + "_" + str(tiempo) + ".csv", "a")
+    csvcliente = csv.writer(f)
+    
+    csvcliente.writerow("Hola")
+    f.close()
+    print("Se creo archivo")
+
+    #tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
     print(solicitardni)
     print("csv")
 
