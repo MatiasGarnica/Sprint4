@@ -31,6 +31,7 @@ def readcsv(archivoabrir):
         if selectoption == "1":
             elegirarchivo()
         else:
+            finalsaludo()
             exit()
 
 
@@ -84,9 +85,7 @@ def identificarcliente(solicitardni):
                                 chequesporpantalla.append(identificarchequesrepetidos[i])
                                 if len(chequesporpantalla) > 0:
                                     print("Se ha encontrado dos cheques con la misma numeración...")
-                                    print("Los siguientes cheques se encuentran repetidos: ")
-                                    for x in chequesporpantalla: 
-                                       print(x)
+                                    finalsaludo()
                                     exit()
                                 else:
                                     None
@@ -97,7 +96,8 @@ def identificarcliente(solicitardni):
             else:           
                 None
         continuar(solicitardni)
-        print("No se encontraron datos relacionados al DNI ingresado.\nIntente nuevamente...")
+        print("No se encontraron datos relacionados al DNI ingresado.")
+        finalsaludo()
         exit()
 
 # En caso de no encontrar cheques repetidos se continua con el proceso
@@ -113,6 +113,7 @@ def continuar(solicitardni):
                             chequesporpantalla.append(identificarchequesrepetidos[i])
                             if len(chequesporpantalla) > 0:
                                 salida(solicitardni)
+                                finalsaludo()
                                 exit()
                             else:  
                                 None
@@ -198,7 +199,7 @@ def mostrarcsv(solicitardni):
     else:
         print("Ingrese la opción que requiera")
         mostrarcsv(solicitardni)
-    print("csv")
+    print("Hemos generado un archivo con los datos solicitados")
 
 
 def mostrarpendiente(solicitardni):
@@ -216,8 +217,11 @@ def mostrartodos(solicitardni):
 def rangofechas():
     print("Determinar Rango de Fechas")
 
+def finalsaludo():
+    print("Muchas gracias por su tiempo!\nQue tenga un buen dia!")
 
 if __name__ =="__main__":
     ingresocliente()
     elegirarchivo()
     solicituddni()
+    finalsaludo()
