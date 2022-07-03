@@ -24,7 +24,6 @@ solicitardni = "2523"
 identificarchequesrepetidos = []
 chequesporpantalla = []
 
-
 #Funciones
 
 #Ingreso a la base
@@ -89,6 +88,7 @@ def identificarcliente(solicitardni):
                                     print("Los siguientes cheques se encuentran repetidos: ")
                                     for x in chequesporpantalla: 
                                        print(x)
+                                    exit()
                                 else:
                                     None
                             else:
@@ -112,7 +112,7 @@ def continuar(solicitardni):
                             chequesporpantalla.append(identificarchequesrepetidos[i])
                             if len(chequesporpantalla) > 0:
                                 salida(solicitardni)
-                                break
+                                exit()
                             else:  
                                 None
                         else:
@@ -137,31 +137,39 @@ def salida(solicitardni):
 def mostrarpantalla(solicitardni):
     tipocheque = input("Ingrese la opción por la cual quiere recibir la información con respecto a los cheques \n 1. Emitido \n 2. Depositado \n ")
     if tipocheque == "1":
+        print("    *******************************    ")
+        print("Los datos de los cheques son los siguienes: ")
+        i = 0
         for elem in filecsvdni2:
-            if str(solicitardni) == elem["DNI"]:
-                print("Segunda etapa")                    
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Emitido":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
             else:
-                None
+                None 
+        print("    *******************************    ")
+
     
     elif tipocheque == "2":
+        print("    *******************************    ")
+        print("Los datos de los cheques son los siguienes: ")
+        i = 0
         for elem in filecsvdni2:
-            for x,y in elem.items():
-                if x == "DNI" and y == str(solicitardni):
-                    print(solicitardni)
-                    print(elem)                
-                else:
-                    None 
+            if str(solicitardni) == elem["DNI"] and elem["TIPO"] == "Depositado":
+                i += 1
+                print("------------Cheque N°" + str(i) + "--------------")
+                int(i)
+                for x, y in elem.items():
+                    print(x + ": " + y)
+            else:
+                None 
+        print("    *******************************    ")
     else:
-        for elem in filecsvdni2:
-            for x,y in elem.items():
-                if x == "DNI" and y == str(solicitardni):
-                    print(solicitardni)
-                    print(elem)                
-                else:
-                    None           
+        print("Ingrese la opción que requiera")
+        mostrarpantalla(solicitardni)
 
-    print("pantalla")
-    
 #Mostrar resultados por csv
 def mostrarcsv(solicitardni):
     tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
@@ -170,6 +178,14 @@ def mostrarcsv(solicitardni):
 
 
 def mostrarpendiente(solicitardni):
+    
+    for elem in filecsvdni2:
+        for x,y in elem.items():
+            if x == "DNI" and y == str(solicitardni):
+                print(solicitardni)
+                print(elem)                
+            else:
+                None 
     print("pendiente")
 
 def mostraraprobado(solicitardni):
@@ -177,6 +193,9 @@ def mostraraprobado(solicitardni):
 
 def mostrarrechazado(solicitardni):
     print("rechazado")
+
+def mostrartodos(solicitardni):
+    print("todos")
 
 def rangofechas():
     print("Determinar Rango de Fechas")
