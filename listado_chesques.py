@@ -15,10 +15,15 @@ Si no se recibe el estado del cheque imprimir sin filtro de estado """
 #Libreria
 from ast import Break
 import csv
+from multiprocessing.reduction import duplicate
+from os import dup
 
 #Constantes y variables
 filecsvdni2 = []
 solicitardni = "2523"
+identificarchequesrepetidos = []
+chequesporpantalla = []
+
 
 #Funciones
 
@@ -29,7 +34,7 @@ def readcsv():
     csvcheques = csv.reader(file)
     for linea in csvcheques:
         if linea != []:
-            data = {"NroCheque":linea[0], "CodigoBanco":linea[1], "CodigoScurusal":linea[2], "NumeroCuentaOrigen":linea[3], "NumeroCuentaDestino":linea[4], "Valor":linea[5], "FechaOrigen":linea[6], "FechaPago":linea[7], "DNI":linea[8], "Estado":linea[9]}
+            data = {"NroCheque":linea[0], "CodigoBanco":linea[1], "CodigoScurusal":linea[2], "NumeroCuentaOrigen":linea[3], "NumeroCuentaDestino":linea[4], "Valor":linea[5], "FechaOrigen":linea[6], "FechaPago":linea[7], "DNI":linea[8], "Estado":linea[9], "TIPO":linea[10]}
             filecsvdni2.append(data)
     file.close()
 
@@ -68,22 +73,60 @@ def confirmardni(solicitardni):
         print("El valor ingresado no es el correcto.")
         confirmardni(solicitardni)
 
-#Buscar datos del dni ingresado
+#Buscar datos del dni ingresado e identificar cheques repetidos
 def identificarcliente(solicitardni):
-    for elem in filecsvdni2:
-        for x,y in elem.items():
-            if x == "CodigoBanco" and y == str(solicitardni):
-                salida(solicitardni)
-                break                
-            else:
+        for elem in filecsvdni2:
+            if str(solicitardni) == elem["DNI"]:
+                y = elem["NroCheque"]
+                identificarchequesrepetidos.append(y)
+                for i in range(len(identificarchequesrepetidos)):
+                    for j in range(len(identificarchequesrepetidos)):
+                        if i != j:
+                            if identificarchequesrepetidos[i] == identificarchequesrepetidos[j] and identificarchequesrepetidos[i] not in chequesporpantalla:
+                                chequesporpantalla.append(identificarchequesrepetidos[i])
+                                if len(chequesporpantalla) > 0:
+                                    print("Se ha encontrado dos cheques con la misma numeración...")
+                                    print("Los siguientes cheques se encuentran repetidos: ")
+                                    for x in chequesporpantalla: 
+                                       print(x)
+                                else:
+                                    None
+                            else:
+                                None
+                        else:
+                            None
+            else:           
                 None
-    print("No se encontraron datos")
+        continuar(solicitardni)
+
+# En caso de no encontrar cheques repetidos se continua con el proceso
+def continuar(solicitardni):
+    for elem in filecsvdni2:
+        if str(solicitardni) == elem["DNI"]:
+            y = elem["NroCheque"]
+            identificarchequesrepetidos.append(y)
+            for i in range(len(identificarchequesrepetidos)):
+                for j in range(len(identificarchequesrepetidos)):
+                    if i != j:
+                        if identificarchequesrepetidos[i] == identificarchequesrepetidos[j] and identificarchequesrepetidos[i] not in chequesporpantalla:
+                            chequesporpantalla.append(identificarchequesrepetidos[i])
+                            if len(chequesporpantalla) > 0:
+                                salida(solicitardni)
+                                break
+                            else:  
+                                None
+                        else:
+                            None
+                    else:
+                        None
+        else:
+            None  
 
 #Recopilar información del cliente
 def salida(solicitardni):
     consultasalida = input("Ingrese la opción por la cual quiere recibir la información \n 1. Pantalla \n 2. CSV \n ")
     if consultasalida == "1":
-        mostrarpantalla(solicitardni)    
+        mostrarpantalla(solicitardni)
     elif consultasalida == "2":
         mostrarcsv(solicitardni)
     else:
@@ -95,36 +138,49 @@ def mostrarpantalla(solicitardni):
     tipocheque = input("Ingrese la opción por la cual quiere recibir la información con respecto a los cheques \n 1. Emitido \n 2. Depositado \n ")
     if tipocheque == "1":
         for elem in filecsvdni2:
-            for x,y in elem.items():
-                if x == "CodigoBanco" and y == str(solicitardni):
-                    print(elem)
-                    print(solicitardni)                
-                else:
-                    None   
+            if str(solicitardni) == elem["DNI"]:
+                print("Segunda etapa")                    
+            else:
+                None
+    
     elif tipocheque == "2":
         for elem in filecsvdni2:
             for x,y in elem.items():
-                if x == "CodigoBanco" and y == str(solicitardni):
+                if x == "DNI" and y == str(solicitardni):
                     print(solicitardni)
                     print(elem)                
                 else:
-                    None   
+                    None 
     else:
         for elem in filecsvdni2:
             for x,y in elem.items():
-                if x == "CodigoBanco" and y == str(solicitardni):
+                if x == "DNI" and y == str(solicitardni):
                     print(solicitardni)
                     print(elem)                
                 else:
                     None           
 
     print("pantalla")
-
+    
 #Mostrar resultados por csv
 def mostrarcsv(solicitardni):
     tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
     print(solicitardni)
     print("csv")
+
+
+def mostrarpendiente(solicitardni):
+    print("pendiente")
+
+def mostraraprobado(solicitardni):
+    print("aprobado")
+
+def mostrarrechazado(solicitardni):
+    print("rechazado")
+
+def rangofechas():
+    print("Determinar Rango de Fechas")
+
 
 if __name__ =="__main__":
     readcsv()
