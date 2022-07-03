@@ -13,6 +13,7 @@ Si la salida es csv se exporta un archivo que:
 Si no se recibe el estado del cheque imprimir sin filtro de estado """
 
 #Libreria
+from ast import Break
 import csv
 
 #Constantes y variables
@@ -22,23 +23,15 @@ solicitardni = "2523"
 #Funciones
 
 #Ingreso a la base
-def readcsv(solicitardni):
+def readcsv():
 
     file = open("chequera.csv", "r")
     csvcheques = csv.reader(file)
     for linea in csvcheques:
         if linea != []:
-            data = {"NroCheque":linea[0], "CodigoBanco":linea[1], "CodigoScurusal":linea[2], "NumeroCuentaOrigen":linea[3], "NumeroCuentaDestino":linea[4], "Valor":linea[5], }
+            data = {"NroCheque":linea[0], "CodigoBanco":linea[1], "CodigoScurusal":linea[2], "NumeroCuentaOrigen":linea[3], "NumeroCuentaDestino":linea[4], "Valor":linea[5], "FechaOrigen":linea[6], "FechaPago":linea[7], "DNI":linea[8], "Estado":linea[9]}
             filecsvdni2.append(data)
     file.close()
-
-    for elem in filecsvdni2:
-        for x,y in elem.items():
-            if x == "CodigoBanco" and y == str(solicitardni):
-                salida()                
-            else:
-                None
-    print("No se encontraron datos")
 
 #Bienvenida
 def ingresocliente():
@@ -65,7 +58,7 @@ def confirmardni(solicitardni):
     confirmar = input("Quiere continuar (s/n): ")
     if confirmar == "s" or confirmar == "n":
         if confirmar == "s":
-            readcsv(solicitardni)
+            identificarcliente(solicitardni)
             # Ingresar la correcta funcion
         elif confirmar == "n":
             return solicituddni()
@@ -75,20 +68,65 @@ def confirmardni(solicitardni):
         print("El valor ingresado no es el correcto.")
         confirmardni(solicitardni)
 
+#Buscar datos del dni ingresado
+def identificarcliente(solicitardni):
+    for elem in filecsvdni2:
+        for x,y in elem.items():
+            if x == "CodigoBanco" and y == str(solicitardni):
+                salida(solicitardni)
+                break                
+            else:
+                None
+    print("No se encontraron datos")
 
-def salida():
-    print("Salida")    
+#Recopilar información del cliente
+def salida(solicitardni):
+    consultasalida = input("Ingrese la opción por la cual quiere recibir la información \n 1. Pantalla \n 2. CSV \n ")
+    if consultasalida == "1":
+        mostrarpantalla(solicitardni)    
+    elif consultasalida == "2":
+        mostrarcsv(solicitardni)
+    else:
+        print("Ingrese la opción correcta (1/2)")
+        salida()
 
 #Mostrar resultados por pantalla
-def mostraspantalla():
+def mostrarpantalla(solicitardni):
+    tipocheque = input("Ingrese la opción por la cual quiere recibir la información con respecto a los cheques \n 1. Emitido \n 2. Depositado \n ")
+    if tipocheque == "1":
+        for elem in filecsvdni2:
+            for x,y in elem.items():
+                if x == "CodigoBanco" and y == str(solicitardni):
+                    print(elem)
+                    print(solicitardni)                
+                else:
+                    None   
+    elif tipocheque == "2":
+        for elem in filecsvdni2:
+            for x,y in elem.items():
+                if x == "CodigoBanco" and y == str(solicitardni):
+                    print(solicitardni)
+                    print(elem)                
+                else:
+                    None   
+    else:
+        for elem in filecsvdni2:
+            for x,y in elem.items():
+                if x == "CodigoBanco" and y == str(solicitardni):
+                    print(solicitardni)
+                    print(elem)                
+                else:
+                    None           
 
     print("pantalla")
 
 #Mostrar resultados por csv
-def mostrarcsv():
-
+def mostrarcsv(solicitardni):
+    tipocheque = input("Ingrese la opción por la cual quiere recibir la información \n 1. Emitido \n 2. Depositado \n ")
+    print(solicitardni)
     print("csv")
 
 if __name__ =="__main__":
+    readcsv()
     ingresocliente()
     solicituddni()
